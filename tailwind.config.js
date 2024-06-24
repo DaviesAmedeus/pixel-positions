@@ -6,7 +6,19 @@ export default {
   ],
   theme: {
     extend: {
-      "black": "#060606"
+      colors:{
+        "black": "#060606"
+      },
+
+      fontFamily: {
+        "hanken-grotesk": ["Hanken Grotesk", "sans-serif"]
+      },
+
+      fontSize: {
+        "2xs": ".625" //10px
+      }
+
+      
     },
   },
   plugins: [],
