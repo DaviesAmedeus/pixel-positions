@@ -18,7 +18,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        $jobs = Job::all()->groupBy('featured');
+        $jobs = Job::latest()->with(['employer', 'tags'])->get()->groupBy('featured');
 
         
         return view('jobs.index',[
@@ -38,20 +38,20 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-       $attributes = $request->validate([
-        'title'=>['required'],
-        'salary'=>['required'],
-        'location'=>['required'],
-        'schedule'=>['required', Rule::in(['Part Time', 'Full Time'])],
-        'url'=>['required', 'active_url'],
-        'title'=>['nullable'],
-       ]);
+    
+        $attributes = $request->validate([
+            'title' => ['required'],
+            'salary' => ['required'],
+            'location' => ['required'],
+            'schedule' => ['required', Rule::in(['Part Time', 'Full Time'])],
+            'url' => ['required', 'active_url'],
+            'tags' => ['nullable'],
+        ]);
 
-       $attributes['featured'] = $request->has('featured');
+        $attributes['featured'] = $request->has('featured');
 
-       $job = Auth::user()->employer->jobs()->create(Arr::except($attributes, 'tags'));
+        $job = Auth::user()->employer->jobs()->create(Arr::except($attributes, 'tags'));
 
-        //Extracting the tags from the comma separated input from the form
         if ($attributes['tags'] ?? false) {
             foreach (explode(',', $attributes['tags']) as $tag) {
                 $job->tag($tag);
